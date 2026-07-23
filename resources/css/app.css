@@ -1,0 +1,216 @@
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+@custom-variant dark (&:is(.dark *));
+
+@utility dir-ltr {
+    direction: ltr;
+}
+
+@theme {
+    --font-sans:
+        'Instrument Sans', 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif,
+        'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+        'Noto Color Emoji';
+
+    --radius-lg: var(--radius);
+    --radius-md: calc(var(--radius) - 2px);
+    --radius-sm: calc(var(--radius) - 4px);
+
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+
+    --color-destructive: var(--destructive);
+    --color-destructive-foreground: var(--destructive-foreground);
+
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+
+    --color-sidebar: var(--sidebar);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-ring: var(--sidebar-ring);
+
+    --color-brand-navy: var(--brand-navy);
+    --color-brand-blue: var(--brand-blue);
+    --color-brand-cyan: var(--brand-cyan);
+}
+
+:root {
+    /* Avatar Educational Center brand */
+    --brand-navy: #04284f;
+    --brand-blue: #0a4f8f;
+    --brand-cyan: #2eb6d4;
+
+    --background: #e7eef5;
+    --foreground: #04284f;
+    --card: #f3f7fb;
+    --card-foreground: #04284f;
+    --popover: #f3f7fb;
+    --popover-foreground: #04284f;
+    --primary: #04284f;
+    --primary-foreground: #f3f7fb;
+    --secondary: #d5e4f0;
+    --secondary-foreground: #04284f;
+    --muted: #dbe6f0;
+    --muted-foreground: #3d5f7a;
+    --accent: #cfeaf3;
+    --accent-foreground: #04284f;
+    --destructive: oklch(0.577 0.245 27.325);
+    --destructive-foreground: oklch(0.577 0.245 27.325);
+    --border: #b9cddd;
+    --input: #b9cddd;
+    --ring: #2eb6d4;
+    --chart-1: #04284f;
+    --chart-2: #0a4f8f;
+    --chart-3: #2eb6d4;
+    --chart-4: #5bb8e8;
+    --chart-5: #8ad4ef;
+    --radius: 0.625rem;
+    --sidebar: #dce7f1;
+    --sidebar-foreground: #04284f;
+    --sidebar-primary: #04284f;
+    --sidebar-primary-foreground: #f3f7fb;
+    --sidebar-accent: #cfeaf3;
+    --sidebar-accent-foreground: #04284f;
+    --sidebar-border: #b9cddd;
+    --sidebar-ring: #2eb6d4;
+}
+
+.dark {
+    --brand-navy: #053161;
+    --brand-blue: #3ac5e3;
+    --brand-cyan: #3ac5e3;
+
+    --background: #061a33;
+    --foreground: #f3f8fc;
+    --card: #0a2548;
+    --card-foreground: #f3f8fc;
+    --popover: #0a2548;
+    --popover-foreground: #f3f8fc;
+    --primary: #3ac5e3;
+    --primary-foreground: #053161;
+    --secondary: #0f335c;
+    --secondary-foreground: #f3f8fc;
+    --muted: #0f335c;
+    --muted-foreground: #a8c3d9;
+    --accent: #0f335c;
+    --accent-foreground: #3ac5e3;
+    --destructive: oklch(0.396 0.141 25.723);
+    --destructive-foreground: oklch(0.637 0.237 25.331);
+    --border: #1a3f66;
+    --input: #1a3f66;
+    --ring: #3ac5e3;
+    --chart-1: #3ac5e3;
+    --chart-2: #0b579e;
+    --chart-3: #5bb8e8;
+    --chart-4: #8ad4ef;
+    --chart-5: #dff6fb;
+    --sidebar: #053161;
+    --sidebar-foreground: #f3f8fc;
+    --sidebar-primary: #3ac5e3;
+    --sidebar-primary-foreground: #053161;
+    --sidebar-accent: #0b579e;
+    --sidebar-accent-foreground: #f3f8fc;
+    --sidebar-border: #0b579e;
+    --sidebar-ring: #3ac5e3;
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes rise {
+    from {
+        opacity: 0;
+        transform: translateY(16px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes float-slow {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-18px);
+    }
+}
+
+@keyframes float-delayed {
+    0%,
+    100% {
+        transform: translateY(0) translateX(0);
+    }
+    50% {
+        transform: translateY(14px) translateX(-10px);
+    }
+}
+
+@utility animate-fade-in {
+    animation: fade-in 0.7s ease-out both;
+}
+
+@utility animate-rise {
+    animation: rise 0.85s cubic-bezier(0.22, 1, 0.36, 1) 0.12s both;
+}
+
+@utility animate-float-slow {
+    animation: float-slow 9s ease-in-out infinite;
+}
+
+@utility animate-float-delayed {
+    animation: float-delayed 11s ease-in-out 1s infinite;
+}
