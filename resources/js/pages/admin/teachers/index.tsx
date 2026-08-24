@@ -1,7 +1,8 @@
 import { Form, Head, Link } from '@inertiajs/react';
 import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
-import { Pagination, type Paginated } from '@/components/pagination';
+import { Pagination  } from '@/components/pagination';
+import type {Paginated} from '@/components/pagination';
 import { Button } from '@/components/ui/button';
 
 type Teacher = {

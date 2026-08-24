@@ -1,18 +1,14 @@
 import { Head, Link } from '@inertiajs/react';
 import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
+import { dayLabel, formatTimeRange12 } from '@/lib/datetime';
 
-const DAYS = [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-];
-
-type Slot = { day_of_week: number; starts_at: string; ends_at: string };
+type Slot = {
+    day_of_week: number;
+    starts_at: string;
+    ends_at: string;
+    room?: string | null;
+};
 type ReservationRow = {
     id: number;
     student_name: string | null;
@@ -34,7 +30,7 @@ type Teacher = {
 };
 
 function slotLabel(slot: Slot): string {
-    return `${DAYS[slot.day_of_week]} ${slot.starts_at}–${slot.ends_at}`;
+    return `${dayLabel(slot.day_of_week)} ${formatTimeRange12(slot.starts_at, slot.ends_at)}`;
 }
 
 export default function TeacherShow({
@@ -112,6 +108,9 @@ export default function TeacherShow({
                                                     className="rounded-full bg-secondary px-3 py-1 text-xs text-secondary-foreground"
                                                 >
                                                     {slotLabel(slot)}
+                                                    {slot.room
+                                                        ? ` · ${slot.room}`
+                                                        : ''}
                                                 </li>
                                             ))}
                                         </ul>

@@ -8,20 +8,6 @@ test('guest is redirected from admin area', function () {
         ->assertRedirect(route('login'));
 });
 
-test('admin can manage education levels', function () {
-    $admin = User::factory()->admin()->create();
-
-    $this->actingAs($admin)
-        ->post(route('admin.education-levels.store'), [
-            'name' => 'الصف الأول الثانوي',
-        ])
-        ->assertRedirect(route('admin.education-levels.index'));
-
-    $this->assertDatabaseHas('education_levels', [
-        'name' => 'الصف الأول الثانوي',
-    ]);
-});
-
 test('admin can create a subject linked to multiple levels', function () {
     $admin = User::factory()->admin()->create();
     $first = EducationLevel::factory()->create();

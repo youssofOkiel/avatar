@@ -3,22 +3,14 @@ import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
 import { Pagination, type Paginated } from '@/components/pagination';
 import { Button } from '@/components/ui/button';
-
-const DAYS = [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-];
+import { dayLabel, formatTime12 } from '@/lib/datetime';
 
 type ScheduleSlot = {
     id: number;
     day_of_week: number;
     starts_at: string;
     ends_at: string;
+    room?: string | null;
 };
 
 type Reservation = {
@@ -31,7 +23,9 @@ type Reservation = {
 };
 
 function formatSlot(slot: ScheduleSlot): string {
-    return `${DAYS[slot.day_of_week]} ${slot.starts_at.slice(0, 5)}`;
+    const base = `${dayLabel(slot.day_of_week)} ${formatTime12(slot.starts_at)}`;
+
+    return slot.room ? `${base} · ${slot.room}` : base;
 }
 
 export default function AdminReservationsIndex({
@@ -41,10 +35,10 @@ export default function AdminReservationsIndex({
 }) {
     return (
         <>
-            <Head title="الحجوزات" />
+            <Head title="حجوزات الطلاب" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
                 <PageHeader
-                    title="الحجوزات"
+                    title="حجوزات الطلاب"
                     description="سجّل حجوزات الطلاب في المواد المختلفة."
                     actions={
                         <Button asChild>

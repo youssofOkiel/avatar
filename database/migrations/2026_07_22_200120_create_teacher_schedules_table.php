@@ -13,10 +13,12 @@ return new class extends Migration
             $table->foreignId('teacher_id')->constrained()->cascadeOnDelete();
             $table->foreignId('education_level_id')->constrained()->cascadeOnDelete();
             $table->foreignId('subject_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('room_id')->nullable()->constrained()->nullOnDelete();
             $table->unsignedTinyInteger('day_of_week');
             $table->time('starts_at');
             $table->time('ends_at');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

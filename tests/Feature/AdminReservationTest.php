@@ -5,6 +5,7 @@ use App\Models\Reservation;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Teacher;
+use App\Models\TeacherSchedule;
 use App\Models\User;
 
 beforeEach(function () {
@@ -14,7 +15,7 @@ beforeEach(function () {
 /**
  * Set up a teacher who teaches a subject in a level, with one schedule slot.
  *
- * @return array{level: EducationLevel, subject: Subject, teacher: Teacher, schedule: \App\Models\TeacherSchedule}
+ * @return array{level: EducationLevel, subject: Subject, teacher: Teacher, schedule: TeacherSchedule}
  */
 function reservationContext(): array
 {
@@ -44,7 +45,7 @@ test('admin can view the create reservation page', function () {
         ->assertInertia(fn ($page) => $page
             ->component('admin/reservations/create')
             ->has('students')
-            ->has('levels')
+            ->has('levelGroups')
             ->has('teacherSubjects')
             ->has('schedules'));
 });
@@ -126,7 +127,7 @@ test('admin can delete a reservation', function () {
         ->delete(route('admin.reservations.destroy', $reservation))
         ->assertRedirect(route('admin.reservations.index'));
 
-    $this->assertDatabaseMissing('reservations', ['id' => $reservation->id]);
+    $this->assertSoftDeleted($reservation);
 });
 
 test('guests cannot create admin reservations', function () {

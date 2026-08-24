@@ -11,6 +11,10 @@ return new class extends Migration
         Schema::create('education_levels', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->foreignId('education_level_group_id')
+                ->nullable()
+                ->constrained('education_level_groups')
+                ->nullOnDelete();
             $table->timestamps();
         });
     }

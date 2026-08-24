@@ -1,36 +1,98 @@
 import { Head } from '@inertiajs/react';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
-import { dashboard } from '@/routes';
+import { PageHeader } from '@/components/page-header';
 
-export default function Dashboard() {
+type Stats = {
+    teachers: number;
+    students: number;
+    reservations: number;
+    sessions: number;
+};
+
+type Finance = {
+    total_income: number;
+    total_expenses: number;
+    total_net: number;
+    month_income: number;
+    month_expenses: number;
+    month_net: number;
+};
+
+function money(value: number): string {
+    return `${value.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م`;
+}
+
+function StatCard({ label, value }: { label: string; value: string | number }) {
+    return (
+        <div className="rounded-xl border bg-card p-5 shadow-sm">
+            <div className="text-muted-foreground text-sm">{label}</div>
+            <div className="mt-2 text-2xl font-bold">{value}</div>
+        </div>
+    );
+}
+
+export default function Dashboard({
+    stats,
+    finance,
+}: {
+    stats: Stats;
+    finance: Finance;
+}) {
     return (
         <>
-            <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="relative aspect-video overflow-hidden rounded-xl border border-sidebar-border/70 dark:border-sidebar-border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+            <Head title="لوحة التحكم" />
+            <div className="flex flex-col gap-6 p-4 md:p-6">
+                <PageHeader
+                    title="لوحة التحكم"
+                    description="نظرة عامة على المركز والحسابات."
+                />
+
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                    <StatCard label="المعلمون" value={stats.teachers} />
+                    <StatCard label="الطلاب" value={stats.students} />
+                    <StatCard label="الحجوزات" value={stats.reservations} />
+                    <StatCard label="الحصص" value={stats.sessions} />
+                </div>
+
+                <div>
+                    <h2 className="mb-3 text-base font-semibold text-primary">
+                        الحسابات (الإجمالي)
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <StatCard
+                            label="إجمالي الإيرادات"
+                            value={money(finance.total_income)}
+                        />
+                        <StatCard
+                            label="إجمالي المصروفات"
+                            value={money(finance.total_expenses)}
+                        />
+                        <StatCard
+                            label="الصافي"
+                            value={money(finance.total_net)}
+                        />
                     </div>
                 </div>
-                <div className="relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border border-sidebar-border/70 md:min-h-min dark:border-sidebar-border">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                <div>
+                    <h2 className="mb-3 text-base font-semibold text-primary">
+                        حسابات الشهر الحالي
+                    </h2>
+                    <div className="grid gap-4 sm:grid-cols-3">
+                        <StatCard
+                            label="إيرادات الشهر"
+                            value={money(finance.month_income)}
+                        />
+                        <StatCard
+                            label="مصروفات الشهر"
+                            value={money(finance.month_expenses)}
+                        />
+                        <StatCard
+                            label="صافي الشهر"
+                            value={money(finance.month_net)}
+                        />
+                    </div>
                 </div>
             </div>
         </>
     );
 }
-
-Dashboard.layout = {
-    breadcrumbs: [
-        {
-            title: 'Dashboard',
-            href: dashboard(),
-        },
-    ],
-};

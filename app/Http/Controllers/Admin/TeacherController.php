@@ -5,8 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTeacherRequest;
 use App\Http\Requests\Admin\UpdateTeacherRequest;
-use App\Models\EducationLevel;
+use App\Models\Room;
 use App\Models\Teacher;
+use App\Support\GroupedEducationLevels;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -29,7 +30,8 @@ class TeacherController extends Controller
     {
         return Inertia::render('admin/teachers/form', [
             'teacher' => null,
-            'levels' => $this->levelsWithSubjects(),
+            'levelGroups' => GroupedEducationLevels::groupedWithSubjects(),
+            'rooms' => Room::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -55,7 +57,7 @@ class TeacherController extends Controller
         $teacher->load([
             'teacherSubjects.subject:id,name',
             'teacherSubjects.educationLevel:id,name',
-            'schedules',
+            'schedules.room:id,name',
             'reservations.student:id,name,phone',
             'reservations.teacherSchedules:id,day_of_week,starts_at,ends_at',
         ]);
@@ -69,6 +71,7 @@ class TeacherController extends Controller
                     'day_of_week' => $schedule->day_of_week,
                     'starts_at' => substr((string) $schedule->starts_at, 0, 5),
                     'ends_at' => substr((string) $schedule->ends_at, 0, 5),
+                    'room' => $schedule->room?->name,
                 ])->values();
 
             $reservations = $teacher->reservations
@@ -128,12 +131,14 @@ class TeacherController extends Controller
                 'schedules' => $teacher->schedules->map(fn ($schedule): array => [
                     'education_level_id' => $schedule->education_level_id,
                     'subject_id' => $schedule->subject_id,
+                    'room_id' => $schedule->room_id,
                     'day_of_week' => $schedule->day_of_week,
                     'starts_at' => substr((string) $schedule->starts_at, 0, 5),
                     'ends_at' => substr((string) $schedule->ends_at, 0, 5),
                 ]),
             ],
-            'levels' => $this->levelsWithSubjects(),
+            'levelGroups' => GroupedEducationLevels::groupedWithSubjects(),
+            'rooms' => Room::query()->orderBy('name')->get(['id', 'name']),
         ]);
     }
 
@@ -156,7 +161,10 @@ class TeacherController extends Controller
 
     public function destroy(Teacher $teacher): RedirectResponse
     {
-        $teacher->delete();
+        DB::transaction(function () use ($teacher): void {
+            $teacher->schedules()->delete();
+            $teacher->delete();
+        });
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'تم حذف المعلم.']);
 
@@ -192,29 +200,11 @@ class TeacherController extends Controller
             $teacher->schedules()->create([
                 'education_level_id' => $schedule['education_level_id'],
                 'subject_id' => $schedule['subject_id'],
+                'room_id' => $schedule['room_id'] ?? null,
                 'day_of_week' => $schedule['day_of_week'],
                 'starts_at' => $schedule['starts_at'],
                 'ends_at' => $schedule['ends_at'],
             ]);
         }
-    }
-
-    /**
-     * @return \Illuminate\Support\Collection<int, array<string, mixed>>
-     */
-    private function levelsWithSubjects(): \Illuminate\Support\Collection
-    {
-        return EducationLevel::query()
-            ->with('subjects:id,name')
-            ->orderBy('name')
-            ->get()
-            ->map(fn (EducationLevel $level): array => [
-                'id' => $level->id,
-                'name' => $level->name,
-                'subjects' => $level->subjects->map(fn ($subject): array => [
-                    'id' => $subject->id,
-                    'name' => $subject->name,
-                ])->values(),
-            ]);
     }
 }

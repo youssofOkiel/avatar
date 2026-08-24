@@ -2,6 +2,7 @@
 
 use App\Models\ClassSession;
 use App\Models\EducationLevel;
+use App\Models\Room;
 use App\Models\Subject;
 use App\Models\Teacher;
 use App\Models\User;
@@ -15,6 +16,7 @@ test('admin can create a teacher with per-level subjects and schedule', function
     $second = EducationLevel::factory()->create();
     $subject = Subject::factory()->create();
     $subject->educationLevels()->attach([$first->id, $second->id]);
+    $room = Room::factory()->create();
 
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
@@ -27,6 +29,7 @@ test('admin can create a teacher with per-level subjects and schedule', function
                 [
                     'education_level_id' => $first->id,
                     'subject_id' => $subject->id,
+                    'room_id' => $room->id,
                     'day_of_week' => 0,
                     'starts_at' => '16:00',
                     'ends_at' => '17:30',
@@ -71,11 +74,15 @@ test('same subject can be selected for one level but not another', function () {
 test('admin can add an exceptional class session and is redirected to it', function () {
     $teacher = Teacher::factory()->create();
     $subject = Subject::factory()->create();
+    $room = Room::factory()->create();
 
     $this->actingAs($this->admin)
         ->post(route('admin.sessions.store'), [
+            'type' => 'subject',
             'teacher_id' => $teacher->id,
             'subject_id' => $subject->id,
+            'room_id' => $room->id,
+            'income' => 150,
             'starts_at' => now()->addDay()->setTime(16, 0)->format('Y-m-d\TH:i'),
             'ends_at' => now()->addDay()->setTime(17, 0)->format('Y-m-d\TH:i'),
         ]);

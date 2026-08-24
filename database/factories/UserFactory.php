@@ -44,6 +44,13 @@ class UserFactory extends Factory
         ]);
     }
 
+    public function superadmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => UserRole::Superadmin,
+        ]);
+    }
+
     public function withTwoFactor(): static
     {
         return $this;

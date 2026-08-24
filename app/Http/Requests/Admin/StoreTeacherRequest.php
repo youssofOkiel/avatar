@@ -2,11 +2,14 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Http\Requests\Admin\Concerns\ValidatesTeacherSchedules;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class StoreTeacherRequest extends FormRequest
 {
+    use ValidatesTeacherSchedules;
+
     public function authorize(): bool
     {
         return $this->user()?->isAdmin() ?? false;
@@ -27,9 +30,15 @@ class StoreTeacherRequest extends FormRequest
             'schedules' => ['nullable', 'array'],
             'schedules.*.education_level_id' => ['required', 'integer', Rule::exists('education_levels', 'id')],
             'schedules.*.subject_id' => ['required', 'integer', Rule::exists('subjects', 'id')],
+            'schedules.*.room_id' => ['nullable', 'integer', Rule::exists('rooms', 'id')],
             'schedules.*.day_of_week' => ['required', 'integer', 'between:0,6'],
             'schedules.*.starts_at' => ['required', 'date_format:H:i'],
             'schedules.*.ends_at' => ['required', 'date_format:H:i'],
         ];
+    }
+
+    protected function currentTeacherId(): ?int
+    {
+        return null;
     }
 }

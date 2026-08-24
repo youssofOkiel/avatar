@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 
 type Level = { id: number; name: string };
+type LevelGroup = { id: number; name: string; levels: Level[] };
 type Subject = {
     id: number;
     name: string;
@@ -18,11 +19,11 @@ const selectClass =
 
 export default function SubjectsIndex({
     subjects,
-    levels,
+    levelGroups,
     filters,
 }: {
     subjects: Paginated<Subject>;
-    levels: Level[];
+    levelGroups: LevelGroup[];
     filters: { level: number | null };
 }) {
     const onFilterChange = (value: string) => {
@@ -55,10 +56,14 @@ export default function SubjectsIndex({
                         onChange={(e) => onFilterChange(e.target.value)}
                     >
                         <option value="">كل المراحل</option>
-                        {levels.map((level) => (
-                            <option key={level.id} value={level.id}>
-                                {level.name}
-                            </option>
+                        {levelGroups.map((group) => (
+                            <optgroup key={group.id} label={group.name}>
+                                {group.levels.map((level) => (
+                                    <option key={level.id} value={level.id}>
+                                        {level.name}
+                                    </option>
+                                ))}
+                            </optgroup>
                         ))}
                     </select>
                 </div>

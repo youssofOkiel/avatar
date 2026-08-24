@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreSubjectRequest;
 use App\Http\Requests\Admin\UpdateSubjectRequest;
-use App\Models\EducationLevel;
 use App\Models\Subject;
-use Illuminate\Http\Request;
+use App\Support\GroupedEducationLevels;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -36,7 +36,7 @@ class SubjectController extends Controller
                 ->orderBy('name')
                 ->paginate(10)
                 ->withQueryString(),
-            'levels' => EducationLevel::query()->orderBy('name')->get(['id', 'name']),
+            'levelGroups' => GroupedEducationLevels::grouped(),
             'filters' => ['level' => $levelId],
         ]);
     }
@@ -45,7 +45,7 @@ class SubjectController extends Controller
     {
         return Inertia::render('admin/subjects/form', [
             'subject' => null,
-            'levels' => EducationLevel::query()->orderBy('name')->get(['id', 'name']),
+            'levelGroups' => GroupedEducationLevels::grouped(),
         ]);
     }
 
@@ -68,7 +68,7 @@ class SubjectController extends Controller
 
         return Inertia::render('admin/subjects/form', [
             'subject' => $subject,
-            'levels' => EducationLevel::query()->orderBy('name')->get(['id', 'name']),
+            'levelGroups' => GroupedEducationLevels::grouped(),
         ]);
     }
 

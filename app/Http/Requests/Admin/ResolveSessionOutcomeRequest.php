@@ -3,8 +3,9 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
-class UpdateEducationLevelRequest extends FormRequest
+class ResolveSessionOutcomeRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,7 +18,9 @@ class UpdateEducationLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'kind' => ['required', Rule::in(['teacher', 'external', 'session'])],
+            'id' => ['required', 'integer', 'min:1'],
+            'date' => ['required', 'date'],
         ];
     }
 }

@@ -4,9 +4,11 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { dayLabel, formatTimeRange12 } from '@/lib/datetime';
 
 type SubjectOption = { id: number; name: string };
 type Level = { id: number; name: string; subjects: SubjectOption[] };
+type LevelGroup = { id: number; name: string; levels: Level[] };
 type Student = { id: number; name: string | null; phone: string | null };
 type TeacherSubject = {
     teacher_id: number;
@@ -22,29 +24,20 @@ type Schedule = {
     day_of_week: number;
     starts_at: string;
     ends_at: string;
+    room?: string | null;
 };
-
-const DAYS = [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-];
 
 const selectClass =
     'border-input text-foreground h-10 w-full rounded-md border bg-background px-3 text-sm';
 
 export default function AdminReservationsCreate({
     students,
-    levels,
+    levelGroups,
     teacherSubjects,
     schedules,
 }: {
     students: Student[];
-    levels: Level[];
+    levelGroups: LevelGroup[];
     teacherSubjects: TeacherSubject[];
     schedules: Schedule[];
 }) {
@@ -68,8 +61,10 @@ export default function AdminReservationsCreate({
 
     const isNewStudent = data.student_id === '';
 
+    const allLevels = levelGroups.flatMap((group) => group.levels);
+
     const activeSubjects =
-        levels.find((l) => l.id === data.education_level_id)?.subjects ?? [];
+        allLevels.find((l) => l.id === data.education_level_id)?.subjects ?? [];
 
     const availableTeachers =
         data.education_level_id !== '' && data.subject_id !== ''
@@ -218,10 +213,17 @@ export default function AdminReservationsCreate({
                                 }}
                             >
                                 <option value="">اختر المرحلة</option>
-                                {levels.map((level) => (
-                                    <option key={level.id} value={level.id}>
-                                        {level.name}
-                                    </option>
+                                {levelGroups.map((group) => (
+                                    <optgroup key={group.id} label={group.name}>
+                                        {group.levels.map((level) => (
+                                            <option
+                                                key={level.id}
+                                                value={level.id}
+                                            >
+                                                {level.name}
+                                            </option>
+                                        ))}
+                                    </optgroup>
                                 ))}
                             </select>
                             <InputError message={errors.education_level_id} />
@@ -323,11 +325,18 @@ export default function AdminReservationsCreate({
                                                         )
                                                     }
                                                 />
-                                                {DAYS[schedule.day_of_week]}{' '}
+                                                {dayLabel(schedule.day_of_week)}{' '}
                                                 <span className="dir-ltr">
-                                                    {schedule.starts_at}–
-                                                    {schedule.ends_at}
+                                                    {formatTimeRange12(
+                                                        schedule.starts_at,
+                                                        schedule.ends_at,
+                                                    )}
                                                 </span>
+                                                {schedule.room && (
+                                                    <span className="text-muted-foreground text-xs">
+                                                        · {schedule.room}
+                                                    </span>
+                                                )}
                                             </label>
                                         ))}
                                     </div>

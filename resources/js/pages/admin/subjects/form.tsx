@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 type Level = { id: number; name: string };
+type LevelGroup = { id: number; name: string; levels: Level[] };
 
 type Subject = {
     id: number;
@@ -15,10 +16,10 @@ type Subject = {
 
 export default function SubjectForm({
     subject,
-    levels,
+    levelGroups,
 }: {
     subject: Subject;
-    levels: Level[];
+    levelGroups: LevelGroup[];
 }) {
     const isEdit = subject !== null;
 
@@ -80,29 +81,40 @@ export default function SubjectForm({
 
                     <div className="grid gap-2">
                         <Label>المراحل الدراسية</Label>
-                        {levels.length === 0 ? (
+                        {levelGroups.length === 0 ? (
                             <p className="text-muted-foreground text-sm">
-                                لا توجد مراحل دراسية. أضف مرحلة أولًا.
+                                لا توجد مراحل دراسية مُعرَّفة في النظام.
                             </p>
                         ) : (
-                            <div className="grid gap-2 sm:grid-cols-2">
-                                {levels.map((level) => (
-                                    <label
-                                        key={level.id}
-                                        className="flex cursor-pointer items-center gap-2 rounded-md border bg-background p-2 text-sm"
-                                    >
-                                        <input
-                                            type="checkbox"
-                                            className="size-4"
-                                            checked={data.education_level_ids.includes(
-                                                level.id,
-                                            )}
-                                            onChange={() =>
-                                                toggleLevel(level.id)
-                                            }
-                                        />
-                                        {level.name}
-                                    </label>
+                            <div className="space-y-4">
+                                {levelGroups.map((group) => (
+                                    <div key={group.id} className="space-y-2">
+                                        <div className="text-sm font-semibold text-primary">
+                                            {group.name}
+                                        </div>
+                                        <div className="grid gap-2 sm:grid-cols-2">
+                                            {group.levels.map((level) => (
+                                                <label
+                                                    key={level.id}
+                                                    className="flex cursor-pointer items-center gap-2 rounded-md border bg-background p-2 text-sm"
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        className="size-4"
+                                                        checked={data.education_level_ids.includes(
+                                                            level.id,
+                                                        )}
+                                                        onChange={() =>
+                                                            toggleLevel(
+                                                                level.id,
+                                                            )
+                                                        }
+                                                    />
+                                                    {level.name}
+                                                </label>
+                                            ))}
+                                        </div>
+                                    </div>
                                 ))}
                             </div>
                         )}

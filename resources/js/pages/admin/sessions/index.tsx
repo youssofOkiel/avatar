@@ -1,20 +1,29 @@
-import { Form, Head, Link, useForm } from '@inertiajs/react';
+import { Form, Head, Link, router, useForm } from '@inertiajs/react';
 import { EmptyState } from '@/components/empty-state';
 import { PageHeader } from '@/components/page-header';
-import { Pagination, type Paginated } from '@/components/pagination';
+import { Pagination  } from '@/components/pagination';
+import type {Paginated} from '@/components/pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { formatDateTime12 } from '@/lib/datetime';
 
 type SubjectOption = { id: number; name: string };
 type TeacherOption = { id: number; name: string; subjects: SubjectOption[] };
+type RoomOption = { id: number; name: string };
 type Session = {
     id: number;
+    type: 'subject' | 'rental' | 'external';
+    title: string | null;
     starts_at: string;
-    ends_at: string;
-    students_count: number;
-    teacher: { name: string };
-    subject: { name: string };
+    income: number;
+    attendance: number | null;
+    outcome_recorded_at: string | null;
+    canceled_at: string | null;
+    is_past: boolean;
+    teacher: { name: string } | null;
+    subject: { name: string } | null;
+    room: { name: string } | null;
 };
 
 const selectClass =
@@ -27,19 +36,50 @@ function subjectsForTeacher(
     return teachers.find((t) => t.id === teacherId)?.subjects ?? [];
 }
 
+function money(value: number): string {
+    return `${value.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م`;
+}
+
+function cancelSession(id: number): void {
+    router.post(`/admin/sessions/${id}/cancel`);
+}
+
+function restoreSession(id: number): void {
+    router.post(`/admin/sessions/${id}/restore`);
+}
+
 export default function SessionsIndex({
     sessions,
     teachers,
+    rooms,
+    filter,
 }: {
     sessions: Paginated<Session>;
     teachers: TeacherOption[];
+    rooms: RoomOption[];
+    filter: 'all' | 'pending';
 }) {
     const addForm = useForm<{
+        type: 'subject' | 'rental';
         teacher_id: number | '';
         subject_id: number | '';
+        title: string;
+        room_id: number | '';
+        attendance_count: string;
         starts_at: string;
         ends_at: string;
-    }>({ teacher_id: '', subject_id: '', starts_at: '', ends_at: '' });
+    }>({
+        type: 'subject',
+        teacher_id: '',
+        subject_id: '',
+        title: '',
+        room_id: '',
+        attendance_count: '',
+        starts_at: '',
+        ends_at: '',
+    });
+
+    const isRental = addForm.data.type === 'rental';
 
     const submitAdd = (e: React.FormEvent) => {
         e.preventDefault();
@@ -48,73 +88,198 @@ export default function SessionsIndex({
 
     return (
         <>
-            <Head title="الحصص الاستثنائية" />
+            <Head title="الحصص" />
             <div className="flex flex-col gap-6 p-4 md:p-6">
                 <PageHeader
-                    title="الحصص الاستثنائية"
-                    description="أضف حصة استثنائية لمعلم ثم أضف الطلاب إليها."
+                    title="الحصص"
+                    description="أضف حصة أو حجز قاعة، ثم سجّل الإيراد الفعلي بعد انتهائها."
                 />
+
+                <div className="flex gap-2">
+                    <Button
+                        variant={filter === 'all' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() =>
+                            router.get('/admin/sessions', {}, { preserveState: true })
+                        }
+                    >
+                        كل الحصص
+                    </Button>
+                    <Button
+                        variant={filter === 'pending' ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() =>
+                            router.get(
+                                '/admin/sessions',
+                                { filter: 'pending' },
+                                { preserveState: true },
+                            )
+                        }
+                    >
+                        بانتظار تسجيل الإيراد
+                    </Button>
+                </div>
 
                 <form
                     onSubmit={submitAdd}
                     className="space-y-4 rounded-xl border bg-card p-5 shadow-sm"
                 >
                     <h2 className="text-base font-semibold text-primary">
-                        إضافة حصة استثنائية
+                        إضافة حصة
                     </h2>
+
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            onClick={() => addForm.setData('type', 'subject')}
+                            className={`rounded-md border px-4 py-2 text-sm ${
+                                !isRental
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'text-muted-foreground'
+                            }`}
+                        >
+                            حصة دراسية
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => addForm.setData('type', 'rental')}
+                            className={`rounded-md border px-4 py-2 text-sm ${
+                                isRental
+                                    ? 'border-primary bg-primary/10 text-primary'
+                                    : 'text-muted-foreground'
+                            }`}
+                        >
+                            حجز قاعة خارجي
+                        </button>
+                    </div>
+
                     <div className="grid gap-4 md:grid-cols-2">
+                        {isRental ? (
+                            <div className="grid gap-2 md:col-span-2">
+                                <Label>عنوان الحجز</Label>
+                                <Input
+                                    value={addForm.data.title}
+                                    onChange={(e) =>
+                                        addForm.setData('title', e.target.value)
+                                    }
+                                    placeholder="مثال: محاضرة خارجية، اجتماع..."
+                                    required
+                                />
+                                <InputErrorText message={addForm.errors.title} />
+                            </div>
+                        ) : (
+                            <>
+                                <div className="grid gap-2">
+                                    <Label>المعلم</Label>
+                                    <select
+                                        className={selectClass}
+                                        value={addForm.data.teacher_id}
+                                        onChange={(e) => {
+                                            addForm.setData(
+                                                'teacher_id',
+                                                Number(e.target.value),
+                                            );
+                                            addForm.setData('subject_id', '');
+                                        }}
+                                        required
+                                    >
+                                        <option value="" disabled>
+                                            اختر المعلم
+                                        </option>
+                                        {teachers.map((teacher) => (
+                                            <option
+                                                key={teacher.id}
+                                                value={teacher.id}
+                                            >
+                                                {teacher.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <InputErrorText
+                                        message={addForm.errors.teacher_id}
+                                    />
+                                </div>
+                                <div className="grid gap-2">
+                                    <Label>المادة</Label>
+                                    <select
+                                        className={selectClass}
+                                        value={addForm.data.subject_id}
+                                        onChange={(e) =>
+                                            addForm.setData(
+                                                'subject_id',
+                                                Number(e.target.value),
+                                            )
+                                        }
+                                        required
+                                    >
+                                        <option value="" disabled>
+                                            اختر المادة
+                                        </option>
+                                        {subjectsForTeacher(
+                                            teachers,
+                                            addForm.data.teacher_id,
+                                        ).map((subject) => (
+                                            <option
+                                                key={subject.id}
+                                                value={subject.id}
+                                            >
+                                                {subject.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <InputErrorText
+                                        message={addForm.errors.subject_id}
+                                    />
+                                </div>
+                            </>
+                        )}
+
                         <div className="grid gap-2">
-                            <Label>المعلم</Label>
+                            <Label>القاعة</Label>
                             <select
                                 className={selectClass}
-                                value={addForm.data.teacher_id}
-                                onChange={(e) => {
-                                    addForm.setData(
-                                        'teacher_id',
-                                        Number(e.target.value),
-                                    );
-                                    addForm.setData('subject_id', '');
-                                }}
-                                required
-                            >
-                                <option value="" disabled>
-                                    اختر المعلم
-                                </option>
-                                {teachers.map((teacher) => (
-                                    <option key={teacher.id} value={teacher.id}>
-                                        {teacher.name}
-                                    </option>
-                                ))}
-                            </select>
-                            <InputErrorText message={addForm.errors.teacher_id} />
-                        </div>
-                        <div className="grid gap-2">
-                            <Label>المادة</Label>
-                            <select
-                                className={selectClass}
-                                value={addForm.data.subject_id}
+                                value={addForm.data.room_id}
                                 onChange={(e) =>
                                     addForm.setData(
-                                        'subject_id',
+                                        'room_id',
                                         Number(e.target.value),
                                     )
                                 }
                                 required
                             >
                                 <option value="" disabled>
-                                    اختر المادة
+                                    اختر القاعة
                                 </option>
-                                {subjectsForTeacher(
-                                    teachers,
-                                    addForm.data.teacher_id,
-                                ).map((subject) => (
-                                    <option key={subject.id} value={subject.id}>
-                                        {subject.name}
+                                {rooms.map((room) => (
+                                    <option key={room.id} value={room.id}>
+                                        {room.name}
                                     </option>
                                 ))}
                             </select>
-                            <InputErrorText message={addForm.errors.subject_id} />
+                            <InputErrorText message={addForm.errors.room_id} />
                         </div>
+
+                        {isRental && (
+                            <div className="grid gap-2">
+                                <Label>عدد الحضور</Label>
+                                <Input
+                                    type="number"
+                                    min="0"
+                                    value={addForm.data.attendance_count}
+                                    onChange={(e) =>
+                                        addForm.setData(
+                                            'attendance_count',
+                                            e.target.value,
+                                        )
+                                    }
+                                    placeholder="0"
+                                />
+                                <InputErrorText
+                                    message={addForm.errors.attendance_count}
+                                />
+                            </div>
+                        )}
+
                         <div className="grid gap-2">
                             <Label>البداية</Label>
                             <Input
@@ -145,8 +310,8 @@ export default function SessionsIndex({
 
                 {sessions.data.length === 0 ? (
                     <EmptyState
-                        title="لا توجد حصص استثنائية بعد."
-                        description="أضف أول حصة استثنائية من الأعلى."
+                        title="لا توجد حصص بعد."
+                        description="أضف أول حصة من الأعلى."
                     />
                 ) : (
                     <>
@@ -154,18 +319,17 @@ export default function SessionsIndex({
                             <table className="w-full text-sm">
                                 <thead className="bg-muted/60 text-start">
                                     <tr>
+                                        <th className="p-3 font-medium">النوع</th>
                                         <th className="p-3 font-medium">
-                                            المعلم
+                                            المادة / العنوان
                                         </th>
+                                        <th className="p-3 font-medium">القاعة</th>
+                                        <th className="p-3 font-medium">الموعد</th>
                                         <th className="p-3 font-medium">
-                                            المادة
+                                            الإيراد الفعلي
                                         </th>
-                                        <th className="p-3 font-medium">
-                                            الموعد
-                                        </th>
-                                        <th className="p-3 font-medium">
-                                            الطلاب
-                                        </th>
+                                        <th className="p-3 font-medium">الحالة</th>
+                                        <th className="p-3 font-medium">الحضور</th>
                                         <th className="p-3" />
                                     </tr>
                                 </thead>
@@ -175,22 +339,43 @@ export default function SessionsIndex({
                                             key={session.id}
                                             className="border-t transition-colors hover:bg-muted/30"
                                         >
+                                            <td className="p-3">
+                                                {session.type === 'rental'
+                                                    ? 'حجز قاعة'
+                                                    : session.type === 'external'
+                                                      ? 'محاضر خارجي'
+                                                      : 'حصة دراسية'}
+                                            </td>
                                             <td className="p-3 font-medium">
-                                                {session.teacher.name}
+                                                {session.type === 'rental' ||
+                                                session.type === 'external'
+                                                    ? session.title
+                                                    : `${session.subject?.name ?? '-'} — ${session.teacher?.name ?? '-'}`}
                                             </td>
                                             <td className="p-3">
-                                                {session.subject.name}
+                                                {session.room?.name ?? '—'}
                                             </td>
                                             <td className="p-3">
-                                                {new Date(
+                                                {formatDateTime12(
                                                     session.starts_at,
-                                                ).toLocaleString('ar-EG', {
-                                                    dateStyle: 'medium',
-                                                    timeStyle: 'short',
-                                                })}
+                                                )}
                                             </td>
                                             <td className="p-3">
-                                                {session.students_count}
+                                                {session.outcome_recorded_at
+                                                    ? money(session.income)
+                                                    : '—'}
+                                            </td>
+                                            <td className="p-3">
+                                                {!session.is_past
+                                                    ? 'قادمة'
+                                                    : session.canceled_at
+                                                      ? 'ملغاة'
+                                                      : session.outcome_recorded_at
+                                                        ? 'مسجّل'
+                                                        : 'بانتظار التسجيل'}
+                                            </td>
+                                            <td className="p-3">
+                                                {session.attendance ?? '—'}
                                             </td>
                                             <td className="p-3 text-end">
                                                 <div className="flex justify-end gap-2">
@@ -202,9 +387,36 @@ export default function SessionsIndex({
                                                         <Link
                                                             href={`/admin/sessions/${session.id}`}
                                                         >
-                                                            التفاصيل والطلاب
+                                                            التفاصيل
                                                         </Link>
                                                     </Button>
+                                                    {session.canceled_at ? (
+                                                        <Button
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() =>
+                                                                restoreSession(
+                                                                    session.id,
+                                                                )
+                                                            }
+                                                        >
+                                                            استعادة
+                                                        </Button>
+                                                    ) : (
+                                                        !session.outcome_recorded_at && (
+                                                            <Button
+                                                                variant="outline"
+                                                                size="sm"
+                                                                onClick={() =>
+                                                                    cancelSession(
+                                                                        session.id,
+                                                                    )
+                                                                }
+                                                            >
+                                                                إلغاء
+                                                            </Button>
+                                                        )
+                                                    )}
                                                     <Form
                                                         action={`/admin/sessions/${session.id}`}
                                                         method="delete"

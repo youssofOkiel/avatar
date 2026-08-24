@@ -1,9 +1,13 @@
-import { Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import {
     CalendarDays,
+    CalendarRange,
     ClipboardList,
-    GraduationCap,
+    LayoutGrid,
     Library,
+    Presentation,
+    Receipt,
+    TrendingUp,
     UserRound,
     Users,
 } from 'lucide-react';
@@ -26,15 +30,27 @@ import type { NavItem } from '@/types';
 const footerNavItems: NavItem[] = [];
 
 const adminNav: NavItem[] = [
-    { title: 'الحجوزات', href: '/admin/reservations', icon: ClipboardList },
+    { title: 'الجدول', href: '/admin/schedule', icon: CalendarRange },
+    { title: 'حجوزات الطلاب', href: '/admin/reservations', icon: ClipboardList },
     { title: 'الطلاب', href: '/admin/students', icon: UserRound },
-    { title: 'الحصص', href: '/admin/sessions', icon: CalendarDays },
+    { title: 'حجز قاعة', href: '/admin/sessions', icon: CalendarDays },
     { title: 'المعلمون', href: '/admin/teachers', icon: Users },
+    { title: 'محاضرون خارجيون', href: '/admin/external-lecturers', icon: Presentation },
     { title: 'المواد', href: '/admin/subjects', icon: Library },
-    { title: 'المراحل الدراسية', href: '/admin/education-levels', icon: GraduationCap },
+    { title: 'المصروفات', href: '/admin/expenses', icon: Receipt },
+];
+
+const superadminNav: NavItem[] = [
+    { title: 'لوحة التحكم', href: '/dashboard', icon: LayoutGrid },
+    { title: 'التقارير', href: '/admin/reports', icon: TrendingUp },
 ];
 
 export function AppSidebar() {
+    const { auth } = usePage().props;
+    const isSuperadmin = auth.user?.role === 'superadmin';
+
+    const items = isSuperadmin ? [...superadminNav, ...adminNav] : adminNav;
+
     return (
         <Sidebar collapsible="icon" variant="inset" side="right">
             <SidebarHeader>
@@ -50,7 +66,7 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={adminNav} />
+                <NavMain items={items} />
             </SidebarContent>
 
             <SidebarFooter>

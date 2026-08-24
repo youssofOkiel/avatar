@@ -5,13 +5,18 @@ import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { WEEKDAY_OPTIONS } from '@/lib/datetime';
+import { reportFormErrors } from '@/lib/form-feedback';
 
 type SubjectOption = { id: number; name: string };
 type Level = { id: number; name: string; subjects: SubjectOption[] };
+type LevelGroup = { id: number; name: string; levels: Level[] };
+type RoomOption = { id: number; name: string };
 type Selection = { education_level_id: number; subject_id: number };
 type Schedule = {
     education_level_id: number;
     subject_id: number;
+    room_id: number | '' | null;
     day_of_week: number;
     starts_at: string;
     ends_at: string;
@@ -26,16 +31,6 @@ type Teacher = {
     schedules: Schedule[];
 } | null;
 
-const DAYS = [
-    'الأحد',
-    'الإثنين',
-    'الثلاثاء',
-    'الأربعاء',
-    'الخميس',
-    'الجمعة',
-    'السبت',
-];
-
 const selectClass =
     'border-input text-foreground h-10 rounded-md border bg-background px-3 text-sm';
 
@@ -43,10 +38,12 @@ const keyOf = (levelId: number, subjectId: number) => `${levelId}:${subjectId}`;
 
 export default function TeacherForm({
     teacher,
-    levels,
+    levelGroups,
+    rooms,
 }: {
     teacher: Teacher;
-    levels: Level[];
+    levelGroups: LevelGroup[];
+    rooms: RoomOption[];
 }) {
     const isEdit = teacher !== null;
 
@@ -61,11 +58,16 @@ export default function TeacherForm({
         bio: teacher?.bio ?? '',
         is_active: teacher?.is_active ?? true,
         selections: teacher?.selections ?? [],
-        schedules: teacher?.schedules ?? [],
+        schedules: (teacher?.schedules ?? []).map((schedule) => ({
+            ...schedule,
+            room_id: schedule.room_id ?? '',
+        })),
     });
 
+    const allLevels = levelGroups.flatMap((group) => group.levels);
+
     const subjectName = (id: number): string => {
-        for (const level of levels) {
+        for (const level of allLevels) {
             const found = level.subjects.find((s) => s.id === id);
 
             if (found) {
@@ -77,7 +79,7 @@ export default function TeacherForm({
     };
 
     const levelName = (id: number): string =>
-        levels.find((l) => l.id === id)?.name ?? '';
+        allLevels.find((l) => l.id === id)?.name ?? '';
 
     const isSelected = (levelId: number, subjectId: number): boolean =>
         data.selections.some(
@@ -124,7 +126,8 @@ export default function TeacherForm({
             {
                 education_level_id: first.education_level_id,
                 subject_id: first.subject_id,
-                day_of_week: 0,
+                room_id: '',
+                day_of_week: WEEKDAY_OPTIONS[0].value,
                 starts_at: '16:00',
                 ends_at: '17:00',
             },
@@ -148,13 +151,57 @@ export default function TeacherForm({
         );
     };
 
+    const scheduleError = (index: number): string | undefined => {
+        const flat = errors as Record<string, string>;
+
+        return (
+            flat[`schedules.${index}.starts_at`] ??
+            flat[`schedules.${index}.ends_at`] ??
+            flat[`schedules.${index}.room_id`]
+        );
+    };
+
+    const scheduleHasConflict = (index: number): boolean => {
+        const current = data.schedules[index];
+
+        if (!current?.starts_at || !current?.ends_at) {
+            return false;
+        }
+
+        return data.schedules.some((other, otherIndex) => {
+            if (otherIndex === index) {
+                return false;
+            }
+
+            if (
+                other.education_level_id !== current.education_level_id ||
+                other.day_of_week !== current.day_of_week
+            ) {
+                return false;
+            }
+
+            if (!other.starts_at || !other.ends_at) {
+                return false;
+            }
+
+            return (
+                other.starts_at < current.ends_at &&
+                other.ends_at > current.starts_at
+            );
+        });
+    };
+
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
 
+        const options = {
+            onError: reportFormErrors,
+        };
+
         if (isEdit) {
-            put(`/admin/teachers/${teacher.id}`);
+            put(`/admin/teachers/${teacher.id}`, options);
         } else {
-            post('/admin/teachers');
+            post('/admin/teachers', options);
         }
     };
 
@@ -219,13 +266,18 @@ export default function TeacherForm({
                             </p>
                         </div>
 
-                        {levels.length === 0 ? (
+                        {levelGroups.length === 0 ? (
                             <p className="text-muted-foreground text-sm">
-                                لا توجد مواد. أضف المراحل والمواد أولًا.
+                                لا توجد مراحل أو مواد مُعرَّفة في النظام.
                             </p>
                         ) : (
-                            <div className="space-y-4">
-                                {levels.map((level) => (
+                            <div className="space-y-6">
+                                {levelGroups.map((group) => (
+                                    <div key={group.id} className="space-y-4">
+                                        <h3 className="text-sm font-semibold text-primary">
+                                            {group.name}
+                                        </h3>
+                                        {group.levels.map((level) => (
                                     <div key={level.id} className="space-y-2">
                                         <div className="text-sm font-medium">
                                             {level.name}
@@ -267,6 +319,8 @@ export default function TeacherForm({
                                         )}
                                     </div>
                                 ))}
+                                    </div>
+                                ))}
                             </div>
                         )}
                         <InputError message={errors.selections} />
@@ -299,10 +353,18 @@ export default function TeacherForm({
                             </p>
                         ) : (
                             <div className="space-y-3">
-                                {data.schedules.map((schedule, index) => (
+                                {data.schedules.map((schedule, index) => {
+                                    const invalid =
+                                        scheduleHasConflict(index) ||
+                                        Boolean(scheduleError(index));
+
+                                    return (
                                     <div
                                         key={index}
-                                        className="flex flex-wrap items-end gap-3 rounded-md border bg-background p-3"
+                                        data-invalid={invalid ? 'true' : undefined}
+                                        className={`flex flex-wrap items-end gap-3 rounded-md border bg-background p-3 ${
+                                            invalid ? 'border-destructive' : ''
+                                        }`}
                                     >
                                         <div className="grid gap-1">
                                             <Label className="text-xs">
@@ -349,6 +411,36 @@ export default function TeacherForm({
                                         </div>
                                         <div className="grid gap-1">
                                             <Label className="text-xs">
+                                                القاعة
+                                            </Label>
+                                            <select
+                                                className={selectClass}
+                                                value={schedule.room_id ?? ''}
+                                                onChange={(e) =>
+                                                    updateSchedule(index, {
+                                                        room_id: e.target.value
+                                                            ? Number(
+                                                                  e.target.value,
+                                                              )
+                                                            : '',
+                                                    })
+                                                }
+                                            >
+                                                <option value="">
+                                                    بدون قاعة
+                                                </option>
+                                                {rooms.map((room) => (
+                                                    <option
+                                                        key={room.id}
+                                                        value={room.id}
+                                                    >
+                                                        {room.name}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                        <div className="grid gap-1">
+                                            <Label className="text-xs">
                                                 اليوم
                                             </Label>
                                             <select
@@ -362,9 +454,12 @@ export default function TeacherForm({
                                                     })
                                                 }
                                             >
-                                                {DAYS.map((day, i) => (
-                                                    <option key={i} value={i}>
-                                                        {day}
+                                                {WEEKDAY_OPTIONS.map((day) => (
+                                                    <option
+                                                        key={day.value}
+                                                        value={day.value}
+                                                    >
+                                                        {day.label}
                                                     </option>
                                                 ))}
                                             </select>
@@ -406,8 +501,14 @@ export default function TeacherForm({
                                         >
                                             <Trash2 className="size-4 text-destructive" />
                                         </Button>
+                                        {scheduleError(index) && (
+                                            <p className="w-full text-sm text-destructive">
+                                                {scheduleError(index)}
+                                            </p>
+                                        )}
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         )}
                     </div>

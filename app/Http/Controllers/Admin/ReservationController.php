@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreReservationRequest;
-use App\Models\EducationLevel;
 use App\Models\Reservation;
 use App\Models\Student;
 use App\Models\TeacherSchedule;
 use App\Models\TeacherSubject;
+use App\Support\GroupedEducationLevels;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -25,7 +25,8 @@ class ReservationController extends Controller
                     'subject:id,name',
                     'teacher:id,name',
                     'educationLevel:id,name',
-                    'teacherSchedules:id,day_of_week,starts_at,ends_at',
+                    'teacherSchedules:id,room_id,day_of_week,starts_at,ends_at',
+                    'teacherSchedules.room:id,name',
                 ])
                 ->latest()
                 ->paginate(10),
@@ -38,18 +39,7 @@ class ReservationController extends Controller
             'students' => Student::query()
                 ->orderBy('name')
                 ->get(['id', 'name', 'phone']),
-            'levels' => EducationLevel::query()
-                ->with('subjects:id,name')
-                ->orderBy('name')
-                ->get()
-                ->map(fn (EducationLevel $level): array => [
-                    'id' => $level->id,
-                    'name' => $level->name,
-                    'subjects' => $level->subjects->map(fn ($subject): array => [
-                        'id' => $subject->id,
-                        'name' => $subject->name,
-                    ])->values(),
-                ]),
+            'levelGroups' => GroupedEducationLevels::groupedWithSubjects(),
             'teacherSubjects' => TeacherSubject::query()
                 ->whereHas('teacher', fn ($query) => $query->where('is_active', true))
                 ->with('teacher:id,name')
@@ -61,6 +51,7 @@ class ReservationController extends Controller
                     'subject_id' => $item->subject_id,
                 ]),
             'schedules' => TeacherSchedule::query()
+                ->with('room:id,name')
                 ->get()
                 ->map(fn (TeacherSchedule $schedule): array => [
                     'id' => $schedule->id,
@@ -70,6 +61,7 @@ class ReservationController extends Controller
                     'day_of_week' => $schedule->day_of_week,
                     'starts_at' => substr((string) $schedule->starts_at, 0, 5),
                     'ends_at' => substr((string) $schedule->ends_at, 0, 5),
+                    'room' => $schedule->room?->name,
                 ]),
         ]);
     }
@@ -79,12 +71,16 @@ class ReservationController extends Controller
         DB::transaction(function () use ($request): void {
             $student = $this->resolveStudent($request->validated());
 
-            $reservation = Reservation::query()->firstOrCreate([
+            $reservation = Reservation::withTrashed()->firstOrCreate([
                 'student_id' => $student->id,
                 'education_level_id' => $request->validated('education_level_id'),
                 'subject_id' => $request->validated('subject_id'),
                 'teacher_id' => $request->validated('teacher_id'),
             ]);
+
+            if ($reservation->trashed()) {
+                $reservation->restore();
+            }
 
             $scheduleIds = TeacherSchedule::query()
                 ->where('teacher_id', $request->validated('teacher_id'))
@@ -123,7 +119,10 @@ class ReservationController extends Controller
         $phone = isset($validated['phone']) ? trim((string) $validated['phone']) : null;
 
         if ($phone) {
-            $student = Student::query()->firstOrNew(['phone' => $phone]);
+            $student = Student::withTrashed()->firstOrNew(['phone' => $phone]);
+            if ($student->trashed()) {
+                $student->restore();
+            }
             if ($name && ! $student->name) {
                 $student->name = $name;
             }

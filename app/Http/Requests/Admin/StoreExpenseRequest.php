@@ -4,7 +4,7 @@ namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEducationLevelRequest extends FormRequest
+class StoreExpenseRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -17,7 +17,9 @@ class StoreEducationLevelRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            'date' => ['required', 'date'],
+            'amount' => ['required', 'numeric', 'min:0'],
+            'description' => ['required', 'string', 'max:255'],
         ];
     }
 }

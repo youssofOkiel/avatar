@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('class_session_id')->constrained()->cascadeOnDelete();
             $table->foreignId('student_id')->constrained()->cascadeOnDelete();
+            $table->boolean('attended')->default(false);
 
             $table->unique(['class_session_id', 'student_id']);
         });

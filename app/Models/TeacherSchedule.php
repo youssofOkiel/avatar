@@ -5,10 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-#[Fillable(['teacher_id', 'education_level_id', 'subject_id', 'day_of_week', 'starts_at', 'ends_at'])]
+#[Fillable(['teacher_id', 'education_level_id', 'subject_id', 'room_id', 'day_of_week', 'starts_at', 'ends_at'])]
 class TeacherSchedule extends Model
 {
+    use SoftDeletes;
+
     /**
      * @return array<string, string>
      */
@@ -41,5 +44,13 @@ class TeacherSchedule extends Model
     public function educationLevel(): BelongsTo
     {
         return $this->belongsTo(EducationLevel::class);
+    }
+
+    /**
+     * @return BelongsTo<Room, $this>
+     */
+    public function room(): BelongsTo
+    {
+        return $this->belongsTo(Room::class);
     }
 }
