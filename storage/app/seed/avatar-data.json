@@ -1,0 +1,904 @@
+{
+    "rooms": [
+        "قاعة 1",
+        "قاعة 2",
+        "قاعة 3",
+        "قاعة 4",
+        "قاعة 5"
+    ],
+    "education_level_groups": [
+        {
+            "id": 1,
+            "name": "المرحلة الثانوية"
+        },
+        {
+            "id": 2,
+            "name": "المرحلة الإعدادية"
+        },
+        {
+            "id": 3,
+            "name": "المرحلة الابتدائية"
+        }
+    ],
+    "education_levels": [
+        {
+            "id": 1,
+            "name": "الصف الأول الثانوي",
+            "education_level_group_id": 1
+        },
+        {
+            "id": 2,
+            "name": "الصف الثاني الثانوي",
+            "education_level_group_id": 1
+        },
+        {
+            "id": 3,
+            "name": "الصف الثالث الثانوي",
+            "education_level_group_id": 1
+        },
+        {
+            "id": 4,
+            "name": "الصف الاول الاعدادي",
+            "education_level_group_id": 2
+        },
+        {
+            "id": 5,
+            "name": "الصف الثاني الاعدادي",
+            "education_level_group_id": 2
+        },
+        {
+            "id": 6,
+            "name": "الصف الثالث الاعدادي",
+            "education_level_group_id": 2
+        },
+        {
+            "id": 7,
+            "name": "الصف الاول الابتدائي",
+            "education_level_group_id": 3
+        },
+        {
+            "id": 8,
+            "name": "الصف الثاني الابتدائي",
+            "education_level_group_id": 3
+        },
+        {
+            "id": 9,
+            "name": "الصف الثالث الابتدائي",
+            "education_level_group_id": 3
+        },
+        {
+            "id": 10,
+            "name": "الصف الرابع الابتدائي",
+            "education_level_group_id": 3
+        },
+        {
+            "id": 11,
+            "name": "الصف الخامس الابتدائي",
+            "education_level_group_id": 3
+        },
+        {
+            "id": 12,
+            "name": "الصف السادس الابتدائي",
+            "education_level_group_id": 3
+        }
+    ],
+    "subjects": [
+        {
+            "id": 5,
+            "name": "اللغه العربيه"
+        },
+        {
+            "id": 6,
+            "name": "english"
+        },
+        {
+            "id": 7,
+            "name": "علوم"
+        },
+        {
+            "id": 8,
+            "name": "احياء"
+        },
+        {
+            "id": 9,
+            "name": "علوم متكامله"
+        },
+        {
+            "id": 10,
+            "name": "فيزياء"
+        },
+        {
+            "id": 11,
+            "name": "كيمياء"
+        },
+        {
+            "id": 12,
+            "name": "رياضيات"
+        },
+        {
+            "id": 13,
+            "name": "فلسفه ومنطق"
+        },
+        {
+            "id": 14,
+            "name": "برمجه"
+        }
+    ],
+    "subject_education_level": [
+        {
+            "subject_id": 5,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 5,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 5,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 5,
+            "education_level_id": 4
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 4
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 6
+        },
+        {
+            "subject_id": 6,
+            "education_level_id": 5
+        },
+        {
+            "subject_id": 5,
+            "education_level_id": 6
+        },
+        {
+            "subject_id": 5,
+            "education_level_id": 5
+        },
+        {
+            "subject_id": 7,
+            "education_level_id": 5
+        },
+        {
+            "subject_id": 7,
+            "education_level_id": 6
+        },
+        {
+            "subject_id": 7,
+            "education_level_id": 4
+        },
+        {
+            "subject_id": 8,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 9,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 10,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 10,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 10,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 11,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 11,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 11,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 6
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 5
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 4
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 12,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 13,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 13,
+            "education_level_id": 2
+        },
+        {
+            "subject_id": 13,
+            "education_level_id": 3
+        },
+        {
+            "subject_id": 14,
+            "education_level_id": 1
+        },
+        {
+            "subject_id": 14,
+            "education_level_id": 2
+        }
+    ],
+    "teachers": [
+        {
+            "id": 5,
+            "name": "اسماء صلاح",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 6,
+            "name": "عصام رشوان",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 8,
+            "name": "عاصم محمد",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 9,
+            "name": "محمد كمال",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 10,
+            "name": "عمرو صديق",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 11,
+            "name": "بهاء الدين مرسي",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 12,
+            "name": "سهام الماضي",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 13,
+            "name": "راضي",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 14,
+            "name": "كريم سيدهم",
+            "bio": null,
+            "is_active": true
+        },
+        {
+            "id": 15,
+            "name": "محمد عطيه",
+            "bio": null,
+            "is_active": true
+        }
+    ],
+    "teacher_subject": [
+        {
+            "teacher_id": 6,
+            "education_level_id": 1,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 2,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 1,
+            "subject_id": 9
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 3,
+            "subject_id": 8
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 4,
+            "subject_id": 7
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 5,
+            "subject_id": 7
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 6,
+            "subject_id": 7
+        },
+        {
+            "teacher_id": 8,
+            "education_level_id": 3,
+            "subject_id": 11
+        },
+        {
+            "teacher_id": 9,
+            "education_level_id": 1,
+            "subject_id": 5
+        },
+        {
+            "teacher_id": 9,
+            "education_level_id": 3,
+            "subject_id": 5
+        },
+        {
+            "teacher_id": 9,
+            "education_level_id": 2,
+            "subject_id": 5
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 1,
+            "subject_id": 10
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 3,
+            "subject_id": 10
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 2,
+            "subject_id": 10
+        },
+        {
+            "teacher_id": 11,
+            "education_level_id": 1,
+            "subject_id": 11
+        },
+        {
+            "teacher_id": 11,
+            "education_level_id": 3,
+            "subject_id": 11
+        },
+        {
+            "teacher_id": 11,
+            "education_level_id": 2,
+            "subject_id": 11
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 1,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 3,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 2,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 6,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 3,
+            "subject_id": 13
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 2,
+            "subject_id": 13
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 4,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 6,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 5,
+            "subject_id": 6
+        },
+        {
+            "teacher_id": 15,
+            "education_level_id": 1,
+            "subject_id": 14
+        },
+        {
+            "teacher_id": 15,
+            "education_level_id": 2,
+            "subject_id": 14
+        }
+    ],
+    "teacher_schedules": [
+        {
+            "teacher_id": 6,
+            "education_level_id": 1,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 1,
+            "starts_at": "14:00:00",
+            "ends_at": "16:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 1,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 1,
+            "starts_at": "16:00:00",
+            "ends_at": "17:30:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 1,
+            "subject_id": 6,
+            "room_id": 2,
+            "day_of_week": 3,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 2,
+            "subject_id": 6,
+            "room_id": 5,
+            "day_of_week": 6,
+            "starts_at": "12:00:00",
+            "ends_at": "13:29:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 2,
+            "subject_id": 6,
+            "room_id": 2,
+            "day_of_week": 6,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 2,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 4,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 0,
+            "starts_at": "16:00:00",
+            "ends_at": "18:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 5,
+            "day_of_week": 2,
+            "starts_at": "14:00:00",
+            "ends_at": "16:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 3,
+            "starts_at": "18:00:00",
+            "ends_at": "20:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 4,
+            "day_of_week": 0,
+            "starts_at": "14:00:00",
+            "ends_at": "16:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 4,
+            "day_of_week": 2,
+            "starts_at": "16:00:00",
+            "ends_at": "18:00:00"
+        },
+        {
+            "teacher_id": 6,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 5,
+            "day_of_week": 3,
+            "starts_at": "16:00:00",
+            "ends_at": "18:00:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 3,
+            "subject_id": 8,
+            "room_id": 1,
+            "day_of_week": 6,
+            "starts_at": "17:00:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 1,
+            "subject_id": 9,
+            "room_id": 5,
+            "day_of_week": 2,
+            "starts_at": "17:00:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 4,
+            "subject_id": 7,
+            "room_id": 1,
+            "day_of_week": 6,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 4,
+            "subject_id": 7,
+            "room_id": 3,
+            "day_of_week": 2,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 5,
+            "subject_id": 7,
+            "room_id": 4,
+            "day_of_week": 6,
+            "starts_at": "15:00:00",
+            "ends_at": "16:30:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 5,
+            "subject_id": 7,
+            "room_id": 2,
+            "day_of_week": 2,
+            "starts_at": "15:00:00",
+            "ends_at": "16:30:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 6,
+            "subject_id": 7,
+            "room_id": 4,
+            "day_of_week": 6,
+            "starts_at": "13:00:00",
+            "ends_at": "14:30:00"
+        },
+        {
+            "teacher_id": 5,
+            "education_level_id": 6,
+            "subject_id": 7,
+            "room_id": 2,
+            "day_of_week": 2,
+            "starts_at": "13:00:00",
+            "ends_at": "14:30:00"
+        },
+        {
+            "teacher_id": 8,
+            "education_level_id": 3,
+            "subject_id": 11,
+            "room_id": 1,
+            "day_of_week": 6,
+            "starts_at": "12:00:00",
+            "ends_at": "14:00:00"
+        },
+        {
+            "teacher_id": 9,
+            "education_level_id": 1,
+            "subject_id": 5,
+            "room_id": 2,
+            "day_of_week": 1,
+            "starts_at": "15:30:00",
+            "ends_at": "17:00:00"
+        },
+        {
+            "teacher_id": 9,
+            "education_level_id": 1,
+            "subject_id": 5,
+            "room_id": 4,
+            "day_of_week": 4,
+            "starts_at": "15:30:00",
+            "ends_at": "17:00:00"
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 3,
+            "subject_id": 10,
+            "room_id": 2,
+            "day_of_week": 2,
+            "starts_at": "11:00:00",
+            "ends_at": "13:00:00"
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 2,
+            "subject_id": 10,
+            "room_id": 5,
+            "day_of_week": 1,
+            "starts_at": "14:00:00",
+            "ends_at": "17:00:00"
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 2,
+            "subject_id": 10,
+            "room_id": 1,
+            "day_of_week": 1,
+            "starts_at": "17:30:00",
+            "ends_at": "20:00:00"
+        },
+        {
+            "teacher_id": 10,
+            "education_level_id": 1,
+            "subject_id": 10,
+            "room_id": 2,
+            "day_of_week": 0,
+            "starts_at": "14:00:00",
+            "ends_at": "17:30:00"
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 2,
+            "subject_id": 6,
+            "room_id": 5,
+            "day_of_week": 0,
+            "starts_at": "15:00:00",
+            "ends_at": "17:00:00"
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 2,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 3,
+            "starts_at": "15:00:00",
+            "ends_at": "17:00:00"
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 3,
+            "subject_id": 6,
+            "room_id": 5,
+            "day_of_week": 3,
+            "starts_at": "13:00:00",
+            "ends_at": "15:00:00"
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 6,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 6,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 12,
+            "education_level_id": 6,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 2,
+            "starts_at": "14:00:00",
+            "ends_at": "15:30:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13,
+            "room_id": 2,
+            "day_of_week": 6,
+            "starts_at": "17:30:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13,
+            "room_id": 1,
+            "day_of_week": 2,
+            "starts_at": "17:30:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13,
+            "room_id": 4,
+            "day_of_week": 1,
+            "starts_at": "16:00:00",
+            "ends_at": "18:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13,
+            "room_id": 5,
+            "day_of_week": 4,
+            "starts_at": "16:00:00",
+            "ends_at": "18:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 2,
+            "subject_id": 13,
+            "room_id": 5,
+            "day_of_week": 0,
+            "starts_at": "17:00:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 2,
+            "subject_id": 13,
+            "room_id": 2,
+            "day_of_week": 3,
+            "starts_at": "17:00:00",
+            "ends_at": "19:00:00"
+        },
+        {
+            "teacher_id": 13,
+            "education_level_id": 1,
+            "subject_id": 13,
+            "room_id": 3,
+            "day_of_week": 6,
+            "starts_at": "10:00:00",
+            "ends_at": "12:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 6,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 6,
+            "starts_at": "10:00:00",
+            "ends_at": "11:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 6,
+            "subject_id": 6,
+            "room_id": 2,
+            "day_of_week": 2,
+            "starts_at": "10:00:00",
+            "ends_at": "11:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 5,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 6,
+            "starts_at": "12:00:00",
+            "ends_at": "14:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 5,
+            "subject_id": 6,
+            "room_id": 3,
+            "day_of_week": 2,
+            "starts_at": "12:00:00",
+            "ends_at": "14:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 4,
+            "subject_id": 6,
+            "room_id": 2,
+            "day_of_week": 6,
+            "starts_at": "13:00:00",
+            "ends_at": "14:00:00"
+        },
+        {
+            "teacher_id": 14,
+            "education_level_id": 4,
+            "subject_id": 6,
+            "room_id": 1,
+            "day_of_week": 2,
+            "starts_at": "13:00:00",
+            "ends_at": "14:00:00"
+        },
+        {
+            "teacher_id": 15,
+            "education_level_id": 1,
+            "subject_id": 14,
+            "room_id": 4,
+            "day_of_week": 1,
+            "starts_at": "18:00:00",
+            "ends_at": "20:00:00"
+        },
+        {
+            "teacher_id": 15,
+            "education_level_id": 2,
+            "subject_id": 14,
+            "room_id": 4,
+            "day_of_week": 3,
+            "starts_at": "18:00:00",
+            "ends_at": "20:00:00"
+        }
+    ]
+}
