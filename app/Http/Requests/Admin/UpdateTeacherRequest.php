@@ -23,6 +23,12 @@ class UpdateTeacherRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => [
+                'required',
+                'string',
+                'max:30',
+                Rule::unique(Teacher::class)->withoutTrashed()->ignore($this->route('teacher')),
+            ],
             'bio' => ['nullable', 'string'],
             'is_active' => ['sometimes', 'boolean'],
             'selections' => ['nullable', 'array'],

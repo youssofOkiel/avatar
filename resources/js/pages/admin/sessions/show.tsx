@@ -40,6 +40,12 @@ function money(value: number): string {
     return `${value.toLocaleString('ar-EG', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ج.م`;
 }
 
+function toTimeInput(iso: string): string {
+    const date = new Date(iso);
+
+    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+}
+
 export default function SessionShow({
     session,
     availableStudents,
@@ -54,12 +60,14 @@ export default function SessionShow({
     const attendance = useForm<{
         income: string;
         attendance_count: string;
+        ends_at: string;
     }>({
         income: String(session.income ?? 0),
         attendance_count:
             session.attendance_count === null
                 ? ''
                 : String(session.attendance_count),
+        ends_at: toTimeInput(session.ends_at),
     });
 
     const addStudent = useForm<{
@@ -226,6 +234,22 @@ export default function SessionShow({
                             <InputError
                                 message={attendance.errors.attendance_count}
                             />
+                        </div>
+
+                        <div className="grid gap-2 sm:col-span-2">
+                            <Label htmlFor="ends_at">
+                                وقت النهاية الفعلي
+                            </Label>
+                            <Input
+                                id="ends_at"
+                                type="time"
+                                disabled={!session.is_past || !!session.canceled_at}
+                                value={attendance.data.ends_at}
+                                onChange={(e) =>
+                                    attendance.setData('ends_at', e.target.value)
+                                }
+                            />
+                            <InputError message={attendance.errors.ends_at} />
                         </div>
                     </div>
 

@@ -59,6 +59,8 @@ class ScheduleController extends Controller
 
                 foreach ($teacherSchedules->where('day_of_week', $dow) as $schedule) {
                     $occurrence = $teacherOccurrences->get($schedule->id.'|'.$dateString);
+                    $plannedStarts = substr((string) $schedule->starts_at, 0, 5);
+                    $plannedEnds = substr((string) $schedule->ends_at, 0, 5);
 
                     $items->push($this->item(
                         kind: 'teacher',
@@ -69,8 +71,10 @@ class ScheduleController extends Controller
                         educationLevelId: $schedule->education_level_id,
                         educationLevelGroupId: $schedule->educationLevel?->education_level_group_id,
                         roomId: $schedule->room_id,
-                        startsAt: substr((string) $schedule->starts_at, 0, 5),
-                        endsAt: substr((string) $schedule->ends_at, 0, 5),
+                        startsAt: $occurrence?->starts_at->format('H:i') ?? $plannedStarts,
+                        endsAt: $occurrence?->ends_at->format('H:i') ?? $plannedEnds,
+                        plannedStartsAt: $plannedStarts,
+                        plannedEndsAt: $plannedEnds,
                         occurrenceKind: 'teacher',
                         occurrenceId: $schedule->id,
                         sessionId: $occurrence?->id,
@@ -81,6 +85,8 @@ class ScheduleController extends Controller
 
                 foreach ($externalSchedules->where('day_of_week', $dow) as $schedule) {
                     $occurrence = $externalOccurrences->get($schedule->id.'|'.$dateString);
+                    $plannedStarts = substr((string) $schedule->starts_at, 0, 5);
+                    $plannedEnds = substr((string) $schedule->ends_at, 0, 5);
 
                     $items->push($this->item(
                         kind: 'external',
@@ -91,8 +97,10 @@ class ScheduleController extends Controller
                         educationLevelId: null,
                         educationLevelGroupId: null,
                         roomId: $schedule->room_id,
-                        startsAt: substr((string) $schedule->starts_at, 0, 5),
-                        endsAt: substr((string) $schedule->ends_at, 0, 5),
+                        startsAt: $occurrence?->starts_at->format('H:i') ?? $plannedStarts,
+                        endsAt: $occurrence?->ends_at->format('H:i') ?? $plannedEnds,
+                        plannedStartsAt: $plannedStarts,
+                        plannedEndsAt: $plannedEnds,
                         occurrenceKind: 'external',
                         occurrenceId: $schedule->id,
                         sessionId: $occurrence?->id,
@@ -119,6 +127,8 @@ class ScheduleController extends Controller
                         roomId: $session->room_id,
                         startsAt: $session->starts_at->format('H:i'),
                         endsAt: $session->ends_at->format('H:i'),
+                        plannedStartsAt: $session->starts_at->format('H:i'),
+                        plannedEndsAt: $session->ends_at->format('H:i'),
                         occurrenceKind: 'session',
                         occurrenceId: $session->id,
                         sessionId: $session->id,
@@ -271,6 +281,8 @@ class ScheduleController extends Controller
         ?int $roomId,
         string $startsAt,
         string $endsAt,
+        string $plannedStartsAt,
+        string $plannedEndsAt,
         string $occurrenceKind,
         int $occurrenceId,
         ?int $sessionId,
@@ -288,6 +300,8 @@ class ScheduleController extends Controller
             'room_id' => $roomId,
             'starts_at' => $startsAt,
             'ends_at' => $endsAt,
+            'planned_starts_at' => $plannedStartsAt,
+            'planned_ends_at' => $plannedEndsAt,
             'has_level_conflict' => false,
             'has_room_conflict' => false,
             'occurrence_kind' => $occurrenceKind,

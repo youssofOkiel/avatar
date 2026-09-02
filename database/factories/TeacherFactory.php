@@ -17,6 +17,7 @@ class TeacherFactory extends Factory
     {
         return [
             'name' => $this->faker->name(),
+            'phone' => $this->faker->unique()->numerify('01#########'),
             'bio' => $this->faker->optional()->paragraph(),
             'is_active' => true,
         ];

@@ -32,6 +32,8 @@ type Item = {
     room_id: number | null;
     starts_at: string;
     ends_at: string;
+    planned_starts_at: string;
+    planned_ends_at: string;
     has_level_conflict: boolean;
     has_room_conflict: boolean;
     occurrence_kind: 'teacher' | 'external' | 'session';
@@ -816,6 +818,26 @@ export default function ScheduleIndex({
                                     label="القاعة"
                                     value={selected.roomName}
                                 />
+                                {selected.item.planned_ends_at !==
+                                    selected.item.ends_at && (
+                                    <DetailRow
+                                        label="الوقت المخطط"
+                                        value={formatTimeRange12(
+                                            selected.item.planned_starts_at,
+                                            selected.item.planned_ends_at,
+                                        )}
+                                    />
+                                )}
+                                {selected.item.planned_ends_at !==
+                                    selected.item.ends_at && (
+                                    <DetailRow
+                                        label="الوقت الفعلي"
+                                        value={formatTimeRange12(
+                                            selected.item.starts_at,
+                                            selected.item.ends_at,
+                                        )}
+                                    />
+                                )}
                                 {selected.item.who && (
                                     <DetailRow
                                         label={

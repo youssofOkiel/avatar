@@ -60,6 +60,7 @@ class AvatarDataSeeder extends Seeder
             $this->withTimestamps(array_map(fn (array $teacher): array => [
                 'id' => $teacher['id'],
                 'name' => $teacher['name'],
+                'phone' => $teacher['phone'],
                 'bio' => $teacher['bio'] ?? null,
                 'is_active' => ($teacher['is_active'] ?? true) ? 1 : 0,
             ], $data['teachers']), $now)

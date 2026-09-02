@@ -21,6 +21,7 @@ test('admin can create a teacher with per-level subjects and schedule', function
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'أحمد محمود',
+            'phone' => '01090000001',
             'is_active' => true,
             'selections' => [
                 ['education_level_id' => $first->id, 'subject_id' => $subject->id],
@@ -55,6 +56,7 @@ test('same subject can be selected for one level but not another', function () {
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'أحمد',
+            'phone' => '01090000002',
             'selections' => [
                 ['education_level_id' => $first->id, 'subject_id' => $subject->id],
             ],

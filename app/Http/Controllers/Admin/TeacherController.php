@@ -9,20 +9,30 @@ use App\Models\Room;
 use App\Models\Teacher;
 use App\Support\GroupedEducationLevels;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class TeacherController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request): Response
     {
+        $groupId = $request->integer('group') ?: null;
+
         return Inertia::render('admin/teachers/index', [
             'teachers' => Teacher::query()
                 ->with('subjects:id,name')
                 ->withCount('reservations')
+                ->when($groupId, fn ($query) => $query->whereHas(
+                    'teacherSubjects.educationLevel',
+                    fn ($levelQuery) => $levelQuery->where('education_level_group_id', $groupId)
+                ))
                 ->orderBy('name')
-                ->paginate(10),
+                ->paginate(10)
+                ->withQueryString(),
+            'levelGroups' => GroupedEducationLevels::grouped(),
+            'filters' => ['group' => $groupId],
         ]);
     }
 
@@ -40,6 +50,7 @@ class TeacherController extends Controller
         DB::transaction(function () use ($request): void {
             $teacher = Teacher::query()->create([
                 'name' => $request->validated('name'),
+                'phone' => $request->validated('phone'),
                 'bio' => $request->validated('bio'),
                 'is_active' => $request->boolean('is_active', true),
             ]);
@@ -106,6 +117,7 @@ class TeacherController extends Controller
             'teacher' => [
                 'id' => $teacher->id,
                 'name' => $teacher->name,
+                'phone' => $teacher->phone,
                 'bio' => $teacher->bio,
                 'is_active' => $teacher->is_active,
                 'reservations_count' => $teacher->reservations->count(),
@@ -122,6 +134,7 @@ class TeacherController extends Controller
             'teacher' => [
                 'id' => $teacher->id,
                 'name' => $teacher->name,
+                'phone' => $teacher->phone,
                 'bio' => $teacher->bio,
                 'is_active' => $teacher->is_active,
                 'selections' => $teacher->teacherSubjects->map(fn ($item): array => [
@@ -147,6 +160,7 @@ class TeacherController extends Controller
         DB::transaction(function () use ($request, $teacher): void {
             $teacher->update([
                 'name' => $request->validated('name'),
+                'phone' => $request->validated('phone'),
                 'bio' => $request->validated('bio'),
                 'is_active' => $request->boolean('is_active', true),
             ]);

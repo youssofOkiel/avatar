@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use App\Http\Requests\Admin\Concerns\ValidatesTeacherSchedules;
+use App\Models\Teacher;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -22,6 +23,7 @@ class StoreTeacherRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
+            'phone' => ['required', 'string', 'max:30', Rule::unique(Teacher::class)->withoutTrashed()],
             'bio' => ['nullable', 'string'],
             'is_active' => ['sometimes', 'boolean'],
             'selections' => ['nullable', 'array'],

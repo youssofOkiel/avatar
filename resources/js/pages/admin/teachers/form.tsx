@@ -25,6 +25,7 @@ type Schedule = {
 type Teacher = {
     id: number;
     name: string;
+    phone: string;
     bio: string | null;
     is_active: boolean;
     selections: Selection[];
@@ -49,12 +50,14 @@ export default function TeacherForm({
 
     const { data, setData, post, put, processing, errors } = useForm<{
         name: string;
+        phone: string;
         bio: string;
         is_active: boolean;
         selections: Selection[];
         schedules: Schedule[];
     }>({
         name: teacher?.name ?? '',
+        phone: teacher?.phone ?? '',
         bio: teacher?.bio ?? '',
         is_active: teacher?.is_active ?? true,
         selections: teacher?.selections ?? [],
@@ -229,6 +232,20 @@ export default function TeacherForm({
                                 autoFocus
                             />
                             <InputError message={errors.name} />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="phone">رقم الهاتف</Label>
+                            <Input
+                                id="phone"
+                                type="tel"
+                                value={data.phone}
+                                onChange={(e) => setData('phone', e.target.value)}
+                                required
+                                dir="ltr"
+                                className="text-start"
+                            />
+                            <InputError message={errors.phone} />
                         </div>
 
                         <div className="grid gap-2">

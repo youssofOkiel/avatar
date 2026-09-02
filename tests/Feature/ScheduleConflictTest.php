@@ -33,6 +33,7 @@ test('same level time overlap is allowed across teachers when rooms differ', fun
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم جديد',
+            'phone' => '0191000001',
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->otherSubject->id],
             ],
@@ -57,6 +58,7 @@ test('same level time overlap within submitted schedules is allowed when rooms d
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم جديد',
+            'phone' => '0191000002',
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->otherSubject->id],
@@ -88,6 +90,7 @@ test('same day is accepted when time ranges do not overlap', function () {
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم جديد',
+            'phone' => '0191000003',
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->otherSubject->id],
@@ -119,6 +122,7 @@ test('non overlapping day is accepted', function () {
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم جديد',
+            'phone' => '0191000004',
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
             ],
@@ -155,6 +159,7 @@ test('editing a teacher does not conflict with its own schedule', function () {
     $this->actingAs($this->admin)
         ->put(route('admin.teachers.update', $teacher), [
             'name' => $teacher->name,
+            'phone' => $teacher->phone,
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
             ],
@@ -191,6 +196,7 @@ test('admin can assign a room to an existing schedule that had none', function (
     $this->actingAs($this->admin)
         ->put(route('admin.teachers.update', $teacher), [
             'name' => $teacher->name,
+            'phone' => $teacher->phone,
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
             ],
@@ -215,6 +221,7 @@ test('teacher schedule room is optional', function () {
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم بلا قاعة',
+            'phone' => '0191000005',
             'selections' => [
                 ['education_level_id' => $this->level->id, 'subject_id' => $this->subject->id],
             ],
@@ -251,6 +258,7 @@ test('teacher cannot take a room already used by an external lecturer at the sam
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم متعارض',
+            'phone' => '0191000006',
             'selections' => [
                 ['education_level_id' => $otherLevel->id, 'subject_id' => $this->subject->id],
             ],
@@ -285,6 +293,7 @@ test('different rooms at the same time are allowed', function () {
     $this->actingAs($this->admin)
         ->post(route('admin.teachers.store'), [
             'name' => 'معلم قاعة أخرى',
+            'phone' => '0191000007',
             'selections' => [
                 ['education_level_id' => $otherLevel->id, 'subject_id' => $this->subject->id],
             ],

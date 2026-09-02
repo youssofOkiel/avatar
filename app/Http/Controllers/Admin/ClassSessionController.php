@@ -228,14 +228,23 @@ class ClassSessionController extends Controller
 
         $validated = $request->validated();
 
-        $classSession->update([
+        $payload = [
             'income' => $validated['income'] ?? $classSession->income,
             'attendance_count' => array_key_exists('attendance_count', $validated)
                 ? $validated['attendance_count']
                 : $classSession->attendance_count,
             'outcome_recorded_at' => now(),
             'canceled_at' => null,
-        ]);
+        ];
+
+        if (! empty($validated['ends_at'])) {
+            $payload['ends_at'] = $this->combineSessionDateAndTime(
+                $classSession,
+                (string) $validated['ends_at'],
+            );
+        }
+
+        $classSession->update($payload);
 
         Inertia::flash('toast', ['type' => 'success', 'message' => 'تم حفظ الإيراد الفعلي والحضور.']);
 
@@ -346,6 +355,14 @@ class ClassSessionController extends Controller
         }
 
         return Student::query()->create(['name' => $name]);
+    }
+
+    private function combineSessionDateAndTime(ClassSession $session, string $time): Carbon
+    {
+        $normalized = strlen($time) === 5 ? $time.':00' : $time;
+        [$hours, $minutes, $seconds] = array_map('intval', explode(':', $normalized));
+
+        return Carbon::instance($session->starts_at)->setTime($hours, $minutes, $seconds);
     }
 
     private function markCanceled(ClassSession $session): void

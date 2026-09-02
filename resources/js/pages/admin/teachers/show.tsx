@@ -24,6 +24,7 @@ type Teaching = {
 type Teacher = {
     id: number;
     name: string;
+    phone: string;
     bio: string | null;
     is_active: boolean;
     reservations_count: number;
@@ -60,6 +61,13 @@ export default function TeacherShow({
                         </div>
                     }
                 />
+
+                <div className="rounded-xl border bg-card p-5 text-sm shadow-sm">
+                    <span className="text-muted-foreground">الهاتف: </span>
+                    <span dir="ltr" className="tabular-nums">
+                        {teacher.phone}
+                    </span>
+                </div>
 
                 {teacher.bio && (
                     <div className="rounded-xl border bg-card p-5 text-sm shadow-sm">
